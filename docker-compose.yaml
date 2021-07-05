@@ -1,0 +1,38 @@
+version: "3.3"
+services:
+  listener:
+    container_name: lucas_case_app
+    restart: always
+    build:
+      context: .
+    ports:
+      - "8088:8088"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USERNAME: postgres
+      POSTGRES_HOST: db
+      POSTGRES_DATABASE: postgres
+    depends_on:
+      - db
+    networks:
+      - case-neoway
+  db:
+    container_name: lucas_case_db
+    image: kartoza/postgis
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - lucas_case_db_vol:/var/lib/postgresql/data
+    networks:
+      - case-neoway
+
+networks:
+  case-neoway:
+    driver: bridge
+
+volumes:
+  lucas_case_db_vol:
