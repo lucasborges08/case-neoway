@@ -1,12 +1,27 @@
 version: "3.3"
 services:
-  listener:
+  webapi:
     container_name: lucas_case_app
     restart: always
     build:
       context: .
     ports:
       - "8088:8088"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USERNAME: postgres
+      POSTGRES_HOST: db
+      POSTGRES_DATABASE: postgres
+    depends_on:
+      - db
+    networks:
+      - case-neoway
+  worker:
+    container_name: lucas_case_worker
+    restart: always
+    build:
+      dockerfile: Dockerfile-worker
+      context: .
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USERNAME: postgres

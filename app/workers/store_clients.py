@@ -1,6 +1,8 @@
-from  datetime import datetime
+from datetime import datetime
 import os
 import tempfile
+import logging
+import sys
 from time import sleep
 from operator import itemgetter
 from app.services.files import Files
@@ -14,6 +16,10 @@ attr_slicer = itemgetter(slice(0, 19), slice(19, 31), slice(31, 43), slice(43, 6
 
 clients_service = Clients()
 files_service = Files()
+
+LOG = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
+logging.StreamHandler(sys.stdout)
 
 
 def store_client(line, file_id):
@@ -32,7 +38,7 @@ def process():
                 sleep(5)
                 continue
 
-            print('processando arquivo')
+            LOG.info('processando arquivo')
 
             new_file, filename = tempfile.mkstemp()
             with os.fdopen(new_file, 'wb') as tmp_write:
@@ -62,8 +68,8 @@ def process():
 
             files_service.mark_processed(file_id)
             os.remove(filename)
-            print('started: ' + started.strftime('%Y-%m-%d %H:%M:%S'))
-            print('finished: ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            LOG.info('started: %s', started.strftime('%Y-%m-%d %H:%M:%S'))
+            LOG.info('finished: %s', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
 
 if __name__ == '__main__':
